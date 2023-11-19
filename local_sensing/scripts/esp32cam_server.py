@@ -10,8 +10,15 @@ import numpy as np
 from urllib.parse import urljoin
 from threading import Thread
 import cv2
+import subprocess
+import yaml
+import os
 
-HOST = "http://192.168.2.101"
+with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../config/esp32-cam.yaml")) as yml:
+    config = yaml.safe_load(yml)
+SSID = config['ssid']
+PASSWORD = config['password']
+HOST = "http://"+config["ip_address"]
 STREAM_PORT = "81"
 CAMERA_PORT = "80"
 ENDPOINT_STREAM = "/stream"
@@ -117,6 +124,7 @@ class CameraPublisher(Node):
             response.close()
 
 def main(args=None):
+    subprocess.run(["nmcli", "dev", "wifi", "con", SSID, "password", PASSWORD])
     rclpy.init(args=args)
     camera_publisher = CameraPublisher()
     rclpy.spin(camera_publisher)

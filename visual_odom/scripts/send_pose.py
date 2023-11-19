@@ -4,10 +4,13 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Header
 from geometry_msgs.msg import Pose
+from sensor_msgs.msg import Image
 
 from motion_capture_tracking_interfaces.msg import NamedPoseArray, NamedPose
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 from rclpy.duration import Duration
+import cv2
+from cv_bridge import CvBridge
 
 class PosePublisher(Node):
     def __init__(self):
@@ -19,8 +22,9 @@ class PosePublisher(Node):
             depth=1,
             deadline=Duration(seconds=0, nanoseconds=1e9 / 100.0)
         )
+        self.bridge = CvBridge()
         self.publisher = self.create_publisher(NamedPoseArray, '/poses', qos_profile)
-        # タイマーを作成（1秒ごとにcallbackを呼び出す）
+        self.subscription = self.create_subscription(Image, '/camera_image', self.image_callback, 10)
         timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         
@@ -51,6 +55,11 @@ class PosePublisher(Node):
         
         # メッセージをパブリッシュ
         self.publisher.publish(named_pose_array_msg)
+
+    def image_callback(self, msg):
+        cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        # cv2.imshow("Image window", cv_image)
+        # cv2.waitKey(1)
 
 def main(args=None):
     rclpy.init(args=args)   # ROS 2 Pythonクライアントライブラリを初期化

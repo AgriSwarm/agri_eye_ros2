@@ -1,0 +1,5 @@
+ip_address: 192.168.4.1
+ssid: "ESP32-CAM"
+password: "12345678"
+camera_port: "80"
+stream_port: "81"
