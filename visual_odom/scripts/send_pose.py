@@ -4,7 +4,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Header
 from geometry_msgs.msg import Pose
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, Imu
 
 from motion_capture_tracking_interfaces.msg import NamedPoseArray, NamedPose
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
@@ -24,7 +24,8 @@ class PosePublisher(Node):
         )
         self.bridge = CvBridge()
         self.publisher = self.create_publisher(NamedPoseArray, '/poses', qos_profile)
-        self.subscription = self.create_subscription(Image, '/camera_image', self.image_callback, 10)
+        self.cam_subscription = self.create_subscription(Image, '/camera_image', self.image_callback, 10)
+        self.imu_subscription = self.create_subscription(Imu, '/imu', self.imu_callback, 10)
         timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         
@@ -60,6 +61,9 @@ class PosePublisher(Node):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         # cv2.imshow("Image window", cv_image)
         # cv2.waitKey(1)
+
+    def imu_callback(self, msg):
+        self.get_logger().info(f'imu: {msg}')
 
 def main(args=None):
     rclpy.init(args=args)   # ROS 2 Pythonクライアントライブラリを初期化

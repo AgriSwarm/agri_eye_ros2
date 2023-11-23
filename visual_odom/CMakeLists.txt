@@ -15,20 +15,34 @@ find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
+
+find_package(nav_msgs REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(cv_bridge REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-# ament_target_dependencies(teleop 
-#   rclcpp
-#   sensor_msgs
-#   std_srvs
-#   geometry_msgs
-# )
+add_executable(data_aggregator src/data_aggregator.cpp)
+
+ament_target_dependencies(data_aggregator
+  rclcpp
+  nav_msgs
+  sensor_msgs
+  OpenCV
+  cv_bridge
+  std_srvs
+  geometry_msgs
+)
 
 # Install Python executables
 install(PROGRAMS
   scripts/send_pose.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS
+  data_aggregator
   DESTINATION lib/${PROJECT_NAME}
 )
 

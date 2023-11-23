@@ -24,3 +24,8 @@ visualizationしたい場合はcrazyflieを起動
 ```bash
 ros2 launch crazyflie launch.py backend:=cflib
 ```
+
+### Aggregate imu&image&odom data
+```bash
+ros2 run visual_odom data_aggregator --ros-args -p freq:=10
+```

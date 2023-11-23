@@ -15,6 +15,9 @@
   <depend>std_srvs</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>OpenCV</depend>
 
   <exec_depend>tf_transformations</exec_depend>
 
